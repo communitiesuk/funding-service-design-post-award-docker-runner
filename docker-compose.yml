@@ -1,0 +1,8 @@
+services:
+  data-store:
+      build:
+        context: ../funding-service-design-post-award-data-store
+      command: bash -c "flask run -p 8080 -h 0.0.0.0"
+      volumes: ['../funding-service-design-post-award-data-store:/app']
+      ports:
+        - 4001:8080
