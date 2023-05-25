@@ -1,19 +1,91 @@
 services:
   data-store:
-      build:
-        context: ../funding-service-design-post-award-data-store
-      command: bash -c "flask run -p 8080 -h 0.0.0.0"
-      volumes: ['../funding-service-design-post-award-data-store:/app']
-      ports:
-        - 4001:8080
+    build:
+      context: ../funding-service-design-post-award-data-store
+    command: bash -c "flask run -p 8080 -h 0.0.0.0"
+    volumes: [ '../funding-service-design-post-award-data-store:/app' ]
+    ports:
+      - 4001:8080
+  authenticator:
+    build:
+      context: ../funding-service-design-authenticator
+    volumes: [ '../funding-service-design-authenticator:/app' ]
+    command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run -p 8080 -h 0.0.0.0"
+    ports:
+      - 4004:8080
+      - 5684:5678
+    depends_on:
+      - account-store
+      - fund-store
+      - redis-data
+    environment:
+      - REDIS_INSTANCE_URI=redis://redis-data:6379
+      - ACCOUNT_STORE_API_HOST=http://account-store:8080
+      - APPLICATION_STORE_API_HOST=http://application-store:8080  # not used
+      - FUND_STORE_API_HOST=http://fund-store:8080  # required
+      - AUTHENTICATOR_HOST=http://localhost:4004
+      - NOTIFICATION_SERVICE_HOST=http://notification:8080  # not used
+      - POST_AWARD_FRONTEND_HOST=http://localhost:4002
+      - APPLICANT_FRONTEND_HOST=http://localhost:3008
+      - ASSESSMENT_FRONTEND_HOST=http://localhost:3010
+      #  Uncomment to test Azure AD locally once credentials are set in .env
+#      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
+#      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
+#      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
   frontend:
-      build:
-        context: ../funding-service-design-post-award-data-frontend
-        dockerfile: Dockerfile
-      volumes: ['../funding-service-design-post-award-data-frontend:/app']
-      command: bash -c "flask run -p 8080 -h 0.0.0.0"
-      depends_on:
-        - data-store
-      ports:
-        - 4002:8080
-        - 5688:5678
+    build:
+      context: ../funding-service-design-post-award-data-frontend
+      dockerfile: Dockerfile
+    volumes: [ '../funding-service-design-post-award-data-frontend:/app' ]
+    command: bash -c "flask run -p 8080 -h 0.0.0.0"
+    depends_on:
+      - data-store
+      - authenticator
+    environment:
+      - FLASK_ENV=development
+      - AUTHENTICATOR_HOST=http://localhost:4004
+      - DATA_STORE_API_HOST=http://data-store:8080
+    ports:
+      - 4002:8080
+      - 5688:5678
+  redis-data:
+    image: redis
+    ports:
+      - 6379:6379
+  database:
+    image: postgres
+    volumes:
+      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_MULTIPLE_DATABASES=account_store,fund_store
+    ports:
+      - 5432:5432
+
+  # Needed because Authenticator is still tightly coupled with some parts of the pre-award applications
+  account-store:
+    build:
+      context: ../funding-service-design-account-store
+    command: bash -c "flask db upgrade && flask run -p 8080 -h 0.0.0.0"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@database:5432/account_store
+    volumes: [ '../funding-service-design-account-store:/app' ]
+    ports:
+      - 3003:8080
+    depends_on:
+      - database
+  fund-store:
+    build:
+      context: ../funding-service-design-fund-store
+    command: bash -c "flask db upgrade && python -m debugpy --listen 0.0.0.0:5678 -m flask run -p 8080 -h 0.0.0.0"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@database:5432/fund_store
+    ports:
+      - 3001:8080
+      - 5681:5678
+    depends_on:
+    - database
+    volumes: ['../funding-service-design-fund-store:/app']
