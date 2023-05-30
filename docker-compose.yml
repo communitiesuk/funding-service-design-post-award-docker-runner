@@ -6,6 +6,11 @@ services:
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
     ports:
       - 4001:8080
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@database:5432/data_store
+    depends_on:
+      - database
   authenticator:
     build:
       context: ../funding-service-design-authenticator
@@ -59,7 +64,7 @@ services:
     restart: always
     environment:
       - POSTGRES_PASSWORD=password
-      - POSTGRES_MULTIPLE_DATABASES=account_store,fund_store
+      - POSTGRES_MULTIPLE_DATABASES=account_store,fund_store,data_store
     ports:
       - 5432:5432
 
