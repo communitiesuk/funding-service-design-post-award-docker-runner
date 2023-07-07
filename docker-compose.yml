@@ -70,6 +70,6 @@ services:
     restart: always
     environment:
       - POSTGRES_PASSWORD=password
-      - POSTGRES_MULTIPLE_DATABASES=account_store,fund_store,data_store
+      - POSTGRES_MULTIPLE_DATABASES=account_store,data_store
     ports:
       - 5432:5432
