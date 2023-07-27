@@ -1,4 +1,10 @@
 services:
+  auth-proxy:
+    image: xscys/nginx-sidecar-basic-auth
+    ports:
+      - 8087:8087
+    environment:
+      - FORWARD_PORT:4001
   data-store:
     build:
       context: ../funding-service-design-post-award-data-store
