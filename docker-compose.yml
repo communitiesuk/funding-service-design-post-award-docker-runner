@@ -73,3 +73,20 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=account_store,data_store
     ports:
       - 5432:5432
+  submit:
+    build:
+      context: ../funding-service-design-post-award-submit
+      dockerfile: Dockerfile
+    volumes: [ '../funding-service-design-post-award-submit:/app' ]
+    command: bash -c "flask run -p 8080 -h 0.0.0.0"
+    depends_on:
+      - data-store
+      - authenticator
+    environment:
+      - FLASK_ENV=development
+      - AUTHENTICATOR_HOST=http://localhost:4004
+      - DATA_STORE_API_HOST=http://data-store:8080
+    ports:
+      - 4003:8080
+      - 5689:5678
+
