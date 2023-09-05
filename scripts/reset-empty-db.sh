@@ -13,5 +13,5 @@ new_container_id=$(docker ps --format "{{.ID}}" --filter "name=database")
 sleep 3
 
 # create tables in new database
-docker exec -ti "$new_container_id" psql -U postgres -c "CREATE DATABASE data_store;"
-docker exec -ti "$new_container_id" psql -U postgres -c "CREATE DATABASE account_store;"
+docker exec "$new_container_id" psql -U postgres -c "CREATE DATABASE data_store;"
+docker exec "$new_container_id" psql -U postgres -c "CREATE DATABASE account_store;"
