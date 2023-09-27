@@ -13,5 +13,5 @@ create-bucket --bucket data-store-file-assets-dev \
  aws s3 cp /tmp/example-template.xlsx s3://data-store-file-assets-dev \
 --endpoint-url http://localhost:4566
 
- aws s3 cp /tmp/example-total-grant-awarded s3://data-store-file-assets-dev \
+ aws s3 cp /tmp/example-total-grant-awarded.xlsx s3://data-store-file-assets-dev \
 --endpoint-url http://localhost:4566

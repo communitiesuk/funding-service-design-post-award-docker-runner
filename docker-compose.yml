@@ -98,6 +98,9 @@ services:
     environment:
       - DEBUG=${DEBUG-}
       - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_REGION=eu-central-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
     volumes:
       - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
       - "./S3-files/example-template.xlsx:/tmp/example-template.xlsx"
