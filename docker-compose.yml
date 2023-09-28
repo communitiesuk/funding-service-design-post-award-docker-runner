@@ -104,5 +104,5 @@ services:
     volumes:
       - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
       - "./S3-files/example-template.xlsx:/tmp/example-template.xlsx"
-      - "./S3-files/example-total-grant-awarded.xlsx.xlsx:/tmp/example-total-grant-awarded.xlsx"
+      - "./S3-files/example-total-grant-awarded.xlsx:/tmp/example-total-grant-awarded.xlsx"
       - "/var/run/docker.sock:/var/run/docker.sock"
