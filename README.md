@@ -17,6 +17,9 @@
 * If you get an error about a database not existing, try running `docker compose down` followed by `docker compose up` this will remove and re-create any existing containers and volumes allowing the new databases to be created.
   * Or you can use [this script](#db-race-conditions-windows-fixsh)
 
+## localstack setup
+* The localstack S3 buckets should be running at http://data-store-file-assets-dev.s3.localhost.localstack.cloud:4566/ and http://data-store-failed-files-dev.s3.localhost.localstack.cloud:4566/
+
 # Scripts
 ## reset-all-repos
 Shell script to go through each repo in turn, checkout the `main` branch and execute `git pull`. This is useful when you want to run the docker runner with the latest of all apps. Also optionally 'resets' the postgres image by forcefully removing it - useful if your local migrations get out of sync with the code or you need to start with a blank DB.
