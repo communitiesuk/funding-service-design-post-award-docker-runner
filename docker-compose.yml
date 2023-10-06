@@ -110,4 +110,6 @@ services:
       - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
       - "./S3-files/example-template.xlsx:/tmp/example-template.xlsx"
       - "./S3-files/example-total-grant-awarded.xlsx:/tmp/example-total-grant-awarded.xlsx"
+      - "./S3-files/HS-grant-awarded.csv:/tmp/HS-grant-awarded.csv"
+      - "./S3-files/TD-grant-awarded.csv:/tmp/TD-grant-awarded.csv"
       - "/var/run/docker.sock:/var/run/docker.sock"
