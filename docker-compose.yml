@@ -93,6 +93,7 @@ services:
       - FLASK_ENV=development
       - AUTHENTICATOR_HOST=http://localhost:4004
       - DATA_STORE_API_HOST=http://data-store:8080
+      - NOTIFY_API_KEY=${NOTIFY_API_KEY_SECRET:?err}
     ports:
       - 4003:8080
       - 5689:5678
