@@ -109,5 +109,5 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
     volumes:
       - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
-      - "./S3-files/TF-grant-awarded.csv:/tmp/TF-grant-awarded.csv"
+      - "./S3-files/example-template.xlsx:/tmp/example-template.xlsx"
       - "/var/run/docker.sock:/var/run/docker.sock"
