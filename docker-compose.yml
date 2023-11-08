@@ -14,7 +14,6 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
       - AWS_ENDPOINT_OVERRIDE=http://localstack:4566/
       - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
-      - AWS_S3_BUCKET_FILE_ASSETS=data-store-file-assets-dev
     depends_on:
       - database
   account-store:
@@ -109,5 +108,4 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
     volumes:
       - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
-      - "./S3-files/TF-grant-awarded.csv:/tmp/TF-grant-awarded.csv"
       - "/var/run/docker.sock:/var/run/docker.sock"
