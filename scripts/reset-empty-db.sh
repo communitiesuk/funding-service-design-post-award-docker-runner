@@ -14,4 +14,5 @@ sleep 3
 
 # create tables in new database
 docker exec "$new_container_id" psql -U postgres -c "CREATE DATABASE data_store;"
+docker exec "$new_container_id" psql -U postgres -c "CREATE DATABASE data_store_test;"
 docker exec "$new_container_id" psql -U postgres -c "CREATE DATABASE account_store;"
