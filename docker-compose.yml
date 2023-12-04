@@ -70,7 +70,7 @@ services:
     ports:
       - 6379:6379
   database:
-    image: postgres
+    image: postgres:14.4
     volumes:
       - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
     restart: always
