@@ -1,5 +1,6 @@
 services:
   data-store:
+    # https://github.com/communitiesuk/funding-service-design-post-award-data-store
     build:
       context: ../funding-service-design-post-award-data-store
     command: bash -c "flask db upgrade && flask run -p 8080 -h 0.0.0.0"
@@ -17,6 +18,7 @@ services:
     depends_on:
       - database
   account-store:
+    # https://github.com/communitiesuk/funding-service-design-account-store
     build:
       context: ../funding-service-design-account-store
     command: bash -c "flask db upgrade && flask run -p 8080 -h 0.0.0.0"
@@ -29,6 +31,7 @@ services:
     depends_on:
       - database
   authenticator:
+    # https://github.com/communitiesuk/funding-service-design-authenticator
     build:
       context: ../funding-service-design-authenticator
     volumes: [ '../funding-service-design-authenticator:/app' ]
@@ -50,6 +53,7 @@ services:
 #      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
 #      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
   frontend:
+    # https://github.com/communitiesuk/funding-service-design-post-award-data-frontend
     build:
       context: ../funding-service-design-post-award-data-frontend
       dockerfile: Dockerfile
@@ -80,6 +84,7 @@ services:
     ports:
       - 5432:5432
   submit:
+    # https://github.com/communitiesuk/funding-service-design-post-award-submit
     build:
       context: ../funding-service-design-post-award-submit
       dockerfile: Dockerfile
