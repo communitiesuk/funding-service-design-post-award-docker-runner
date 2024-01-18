@@ -1,0 +1,117 @@
+services:
+  data-store:
+    # https://github.com/communitiesuk/funding-service-design-post-award-data-store
+    build:
+      context: ../funding-service-design-post-award-data-store
+    command: bash -c "flask db upgrade && python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger -p 8080 -h 0.0.0.0"
+    volumes: [ '../funding-service-design-post-award-data-store:/app' ]
+    ports:
+      - 4001:8080
+      - 5683:5678
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@database:5432/data_store
+      - AWS_REGION=${AWS_REGION:-eu-central-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-test}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
+      - AWS_ENDPOINT_OVERRIDE=http://localstack:4566/
+      - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
+    depends_on:
+      - database
+  account-store:
+    # https://github.com/communitiesuk/funding-service-design-account-store
+    build:
+      context: ../funding-service-design-account-store
+    command: bash -c "flask db upgrade && flask run -p 8080 -h 0.0.0.0"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@database:5432/account_store
+    volumes: [ '../funding-service-design-account-store:/app' ]
+    ports:
+      - 3003:8080
+    depends_on:
+      - database
+  authenticator:
+    # https://github.com/communitiesuk/funding-service-design-authenticator
+    build:
+      context: ../funding-service-design-authenticator
+    volumes: [ '../funding-service-design-authenticator:/app' ]
+    command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger -p 8080 -h 0.0.0.0"
+    ports:
+      - 4004:8080
+      - 5684:5678
+    depends_on:
+      - redis-data
+      - account-store
+    environment:
+      - REDIS_INSTANCE_URI=redis://redis-data:6379
+      - ACCOUNT_STORE_API_HOST=http://account-store:8080
+      - AUTHENTICATOR_HOST=http://localhost:4004
+      - POST_AWARD_FRONTEND_HOST=http://localhost:4002
+      - POST_AWARD_SUBMIT_HOST=http://localhost:4003
+      #  Uncomment to test Azure AD locally once credentials are set in .env
+#      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
+#      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
+#      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
+  frontend:
+    # https://github.com/communitiesuk/funding-service-design-post-award-data-frontend
+    build:
+      context: ../funding-service-design-post-award-data-frontend
+      dockerfile: Dockerfile
+    volumes: [ '../funding-service-design-post-award-data-frontend:/app' ]
+    command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger --no-reload -p 8080 -h 0.0.0.0"
+    depends_on:
+      - data-store
+      - authenticator
+    environment:
+      - FLASK_ENV=development
+      - AUTHENTICATOR_HOST=http://localhost:4004
+      - DATA_STORE_API_HOST=http://data-store:8080
+    ports:
+      - 4002:8080
+      - 5688:5678
+  redis-data:
+    image: redis
+    ports:
+      - 6379:6379
+  database:
+    image: postgres:14.4
+    volumes:
+      - ./docker-postgresql-multiple-databases:/docker-entrypoint-initdb.d
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_MULTIPLE_DATABASES=account_store,data_store
+    ports:
+      - 5432:5432
+  submit:
+    # https://github.com/communitiesuk/funding-service-design-post-award-submit
+    build:
+      context: ../funding-service-design-post-award-submit
+      dockerfile: Dockerfile
+    volumes: [ '../funding-service-design-post-award-submit:/app' ]
+    command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger --no-reload -p 8080 -h 0.0.0.0"
+    depends_on:
+      - data-store
+      - authenticator
+    environment:
+      - FLASK_ENV=development
+      - AUTHENTICATOR_HOST=http://localhost:4004
+      - DATA_STORE_API_HOST=http://data-store:8080
+    ports:
+      - 4003:8080
+      - 5689:5678
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      - DEBUG=${DEBUG-}
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_REGION=${AWS_REGION:-eu-central-1}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-test}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
+    volumes:
+      - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
+      - "/var/run/docker.sock:/var/run/docker.sock"

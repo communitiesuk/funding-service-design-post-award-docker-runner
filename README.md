@@ -37,3 +37,53 @@ for authenticator, and then boots the rest of the containers. On windows run fro
 
     ./scripts/db-race-conditions-windows-fix.sh (optional: --build)
 
+# Running in debug mode (VS Code)
+## Python Apps
+The containers in the docker runner can be run with python in debug mode to allow a debugger to connect. This gives instructions for connecting VS Code.
+
+### Docker
+
+There is currently a separate docker-compose file to allow the VS Code debugger to work with the code executing in the docker runner.
+
+Each app in [docker-compose.debug.yml](docker-compose.debug.yml) includes the following value for `command`, which makes the debugger run:
+
+        command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger --host 0.0.0.0 --port 8080"
+
+The 'no-debugger' part relates to the flask debugger, it's useful to remove this option if you want to see the stack traces for things like jinja template errors. The *submit* and *frontend* app commands also include 'no-reload' which disables the Flask auto-reload. This is needed for the VS Code debugging to work for these apps, but can be removed along with the `python -m debugpy --listen 0.0.0.0:5678 -m` if you'd rather use the Flask debugger and reinstate the auto-reload.
+
+To then expose the debug port 5678 to allow a debugger interface to connect, each app also has a (unique) port mapping, eg.:
+
+        ports:
+                - 5683:5678
+
+The individual *data-store* and *frontend* app dockerfiles are currently used in production so shouldn't be hardcoded to point to requirements-dev.txt (which installs debugpy) instead of requirements.txt. Instead, you can rebuild these services and pass in a buildarg which will use requirements-dev.txt to build the services to include debugpy:
+
+    docker compose build --build-arg REQUIREMENTS="requirements-dev.txt"
+
+To start the services with the debug docker-compose file so the VS Code debugger can be attached, run the following command:
+
+    docker compose -f docker-compose.debug.yml up
+
+### VS Code
+
+The port mapping allows you to then configure your chosen debugger (in this case VS code) to connect on that port. If not already present, add the following to the `configurations` block in the launch.json (if not already present) for the particular app you want to debug, where port matches the one exposes in docker-compose. These configurations should be named after the service, `Docker Runner <service-name>` eg. Docker Runner frontend.
+
+
+        {
+            "name": "Docker runner",
+            "type": "python",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5683
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "."
+                }
+            ],
+            "justMyCode": true
+        }
+
+Save your launch.json, navigate to the debug view and select this new configuration from the drop down, then click the green triangle button to connect the debugger. Add some breakpoints and you should be able to step through the code executing in the docker runner.
