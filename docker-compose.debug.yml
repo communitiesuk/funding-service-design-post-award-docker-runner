@@ -3,6 +3,8 @@ services:
     # https://github.com/communitiesuk/funding-service-design-post-award-data-store
     build:
       context: ../funding-service-design-post-award-data-store
+      args: 
+        REQUIREMENTS: requirements-dev.txt
     command: bash -c "flask db upgrade && python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger -p 8080 -h 0.0.0.0"
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
     ports:
@@ -58,6 +60,8 @@ services:
     build:
       context: ../funding-service-design-post-award-data-frontend
       dockerfile: Dockerfile
+      args: 
+        REQUIREMENTS: requirements-dev.txt
     volumes: [ '../funding-service-design-post-award-data-frontend:/app' ]
     command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger --no-reload -p 8080 -h 0.0.0.0"
     depends_on:

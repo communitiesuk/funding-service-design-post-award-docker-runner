@@ -56,13 +56,16 @@ To then expose the debug port 5678 to allow a debugger interface to connect, eac
         ports:
                 - 5683:5678
 
-The individual *data-store* and *frontend* app dockerfiles are currently used in production so shouldn't be hardcoded to point to requirements-dev.txt (which installs debugpy) instead of requirements.txt. Instead, you can rebuild these services and pass in a buildarg which will use requirements-dev.txt to build the services to include debugpy:
+The individual *data-store* and *frontend* app dockerfiles are currently used in production so shouldn't be hardcoded to point to requirements-dev.txt (which installs debugpy) instead of requirements.txt. Instead, we pass in a buildarg which will use requirements-dev.txt to build the services to include debugpy. This buildarg is specified in the [docker-compose.debug.yml](docker-compose.debug.yml).
 
-    docker compose build --build-arg REQUIREMENTS="requirements-dev.txt"
+    build:
+      context: ../funding-service-design-post-award-data-store
+      args: 
+        REQUIREMENTS: requirements-dev.txt
 
-To start the services with the debug docker-compose file so the VS Code debugger can be attached, run the following command:
+To start the services with the debug docker-compose file so the VS Code debugger can be attached, run the following command. The optional `--build` will rebuild *data-store* and *frontend* using requirements-dev.txt if you had already run `docker compose build`, and should be used if one of these containers exits with the error 'No module named debugpy'.):
 
-    docker compose -f docker-compose.debug.yml up
+    docker compose -f docker-compose.debug.yml up (optional: --build)
 
 ### VS Code
 
