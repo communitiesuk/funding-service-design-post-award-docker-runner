@@ -46,7 +46,7 @@ The containers in the docker runner can be run with python in debug mode to allo
 
 ### Docker
 
-To allow the VS Code debugger to work with the code executing in the docker runner, you can run the [vs-code-debug-script.sh](./scripts/vs-code-debug-script.sh) to pass some a variable to the docker-compose file which will allow the debugger to run. 
+To allow the VS Code debugger to work with the code executing in the docker runner, you can run the [vs-code-debug-script.sh](./scripts/vs-code-debug-script.sh) to pass a variable to the docker-compose file which will allow the debugger to run. 
 
     export VSC_DEBUG='python -m debugpy --listen 0.0.0.0:5678 -m flask run --no-debugger --no-reload -p 8080 -h 0.0.0.0'
 
