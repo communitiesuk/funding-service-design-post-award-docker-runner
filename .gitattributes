@@ -1,3 +1,4 @@
 # On windows this file was converted to windows line endings on checkout, added attribute to ensure unix line endings
 # for running on docker
 localstack-script.sh text eol=lf
+docker-postgresql-multiple-databases/create-multiple-postgresql-databases.sh eol=lf
