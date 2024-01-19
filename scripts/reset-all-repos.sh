@@ -38,7 +38,7 @@ if [ "$reset_to_main" = true ] ; then
 
     cd $workspace_dir
 
-    declare -a repos=("authenticator" "account-store" "post-award-data-store" "post-award-data-frontend")
+    declare -a repos=("authenticator" "account-store" "post-award-data-store" "post-award-data-frontend", "post-award-submit")
 
     for repo in "${repos[@]}"
     do
