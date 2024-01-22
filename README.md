@@ -18,7 +18,7 @@
   * Or you can use [this script](#db-race-conditions-windows-fixsh)
 
 ## localstack setup
-* The localstack S3 bucket should be running at http://data-store-failed-files-dev.s3.localhost.localstack.cloud:4566/
+* The localstack S3 buckets should be running at http://data-store-failed-files-dev.s3.localhost.localstack.cloud:4566/ and http://data-store-successful-files-dev.s3.localhost.localstack.cloud:4566/
 
 # Scripts
 ## reset-all-repos
