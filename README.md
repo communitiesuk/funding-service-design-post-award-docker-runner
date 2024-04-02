@@ -2,9 +2,9 @@
 
 ## Prerequisites
 *  [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
-*  **All** funding-service-design apps (listed as `context` keys in [docker-compose.yml](docker-compose.yml) must be cloned and checked out in the parent directory of this repository
 
 ## How to run
+* Run `./bootstrap.sh` to clone all required repositories.
 * Copy `.env.example` to `.env` and ask another team member for the missing secret values
 * `docker compose up`
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
