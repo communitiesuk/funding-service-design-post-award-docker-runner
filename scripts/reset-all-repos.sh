@@ -36,18 +36,20 @@ fi
 if [ "$reset_to_main" = true ] ; then
     echo Resetting all repos to main
 
-    cd $workspace_dir
+    (
+      cd $workspace_dir
 
-    declare -a repos=("authenticator" "account-store" "post-award-data-store" "post-award-data-frontend", "post-award-submit")
+      declare -a repos=("authenticator" "account-store" "post-award-data-store" "post-award-data-frontend", "post-award-submit")
 
-    for repo in "${repos[@]}"
-    do
-    echo -------------------------------------------------------------------------
-    echo ========= Resetting "$repo" =======
-    cd $workspace_dir/$fsd-$repo
-    git status
-    git checkout main
-    git pull
-    echo -------------------------------------------------------------------------
-    done
+      for repo in "${repos[@]}"
+      do
+      echo -------------------------------------------------------------------------
+      echo ========= Resetting "$repo" =======
+      cd $workspace_dir/$fsd-$repo
+      git status
+      git checkout main
+      git pull
+      echo -------------------------------------------------------------------------
+      done
+    )
 fi
