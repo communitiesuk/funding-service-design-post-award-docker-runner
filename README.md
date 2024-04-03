@@ -4,7 +4,7 @@
 *  [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 
 ## How to run
-* Run `./bootstrap.sh` to clone all required repositories.
+* Run `./scripts/bootstrap.sh` to clone all required repositories.
 * Copy `.env.example` to `.env` and ask another team member for the missing secret values
 * `docker compose up`
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
@@ -21,6 +21,9 @@
 * The localstack S3 buckets should be running at http://data-store-failed-files-dev.s3.localhost.localstack.cloud:4566/ and http://data-store-successful-files-dev.s3.localhost.localstack.cloud:4566/
 
 # Scripts
+
+## bootstrap.sh
+Clones all required repositories.
 ## reset-all-repos
 Shell script to go through each repo in turn, checkout the `main` branch and execute `git pull`. This is useful when you want to run the docker runner with the latest of all apps. Also optionally 'resets' the postgres image by forcefully removing it - useful if your local migrations get out of sync with the code or you need to start with a blank DB.
 
