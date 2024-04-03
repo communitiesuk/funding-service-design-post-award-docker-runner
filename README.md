@@ -4,7 +4,7 @@
 *  [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 
 ## How to run
-* Run `./scripts/bootstrap.sh` to clone all required repositories.
+* Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
 * Copy `.env.example` to `.env` and ask another team member for the missing secret values
 * `docker compose up`
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
