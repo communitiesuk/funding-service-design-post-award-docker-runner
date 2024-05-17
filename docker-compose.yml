@@ -55,25 +55,6 @@ services:
 #      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
 #      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
 #      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
-  frontend:
-    # https://github.com/communitiesuk/funding-service-design-post-award-data-frontend
-    build:
-      context: ../funding-service-design-post-award-data-frontend
-      dockerfile: Dockerfile
-      args: 
-        REQUIREMENTS: requirements-dev.txt
-    volumes: [ '../funding-service-design-post-award-data-frontend:/app' ]
-    command: bash -c "${VSC_DEBUG:-flask run -p 8080 -h 0.0.0.0}"
-    depends_on:
-      - data-store
-      - authenticator
-    environment:
-      - FLASK_ENV=development
-      - AUTHENTICATOR_HOST=http://localhost:4004
-      - DATA_STORE_API_HOST=http://data-store:4001
-    ports:
-      - 4002:8080
-      - 5688:5678
   redis-data:
     image: redis
     ports:
@@ -88,23 +69,6 @@ services:
       - POSTGRES_MULTIPLE_DATABASES=account_store,data_store,data_store_test
     ports:
       - 5432:5432
-  submit:
-    # https://github.com/communitiesuk/funding-service-design-post-award-submit
-    build:
-      context: ../funding-service-design-post-award-submit
-      dockerfile: Dockerfile
-    volumes: [ '../funding-service-design-post-award-submit:/app' ]
-    command: bash -c "${VSC_DEBUG:-flask run -p 8080 -h 0.0.0.0}"
-    depends_on:
-      - data-store
-      - authenticator
-    environment:
-      - FLASK_ENV=development
-      - AUTHENTICATOR_HOST=http://localhost:4004
-      - DATA_STORE_API_HOST=http://data-store:4001
-    ports:
-      - 4003:8080
-      - 5689:5678
   localstack:
     image: localstack/localstack
     ports:
