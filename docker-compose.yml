@@ -5,10 +5,10 @@ services:
       context: ../funding-service-design-post-award-data-store
       args: 
         REQUIREMENTS: requirements-dev.txt
-    command: bash -c "flask db upgrade && ${VSC_DEBUG:-flask run -p 8080 -h 0.0.0.0}"
+    command: bash -c "flask db upgrade && ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}"
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
     ports:
-      - 4001:8080
+      - 4001:4001
       - 5683:5678
     environment:
       - FLASK_ENV=development
@@ -70,7 +70,7 @@ services:
     environment:
       - FLASK_ENV=development
       - AUTHENTICATOR_HOST=http://localhost:4004
-      - DATA_STORE_API_HOST=http://data-store:8080
+      - DATA_STORE_API_HOST=http://data-store:4001
     ports:
       - 4002:8080
       - 5688:5678
@@ -101,7 +101,7 @@ services:
     environment:
       - FLASK_ENV=development
       - AUTHENTICATOR_HOST=http://localhost:4004
-      - DATA_STORE_API_HOST=http://data-store:8080
+      - DATA_STORE_API_HOST=http://data-store:4001
     ports:
       - 4003:8080
       - 5689:5678
