@@ -7,9 +7,12 @@ services:
         REQUIREMENTS: requirements-dev.txt
     command: bash -c "flask db upgrade && ${VSC_DEBUG:-flask run -p 8080 -h 0.0.0.0}"
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
+    stdin_open: true
+    tty: true
     ports:
       - 4001:8080
       - 5683:5678
+    env_file: .env
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://postgres:password@database:5432/data_store
@@ -18,6 +21,7 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
       - AWS_ENDPOINT_OVERRIDE=http://localstack:4566/
       - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
+    restart: unless-stopped
     depends_on:
       - database
   account-store:
@@ -67,13 +71,17 @@ services:
     depends_on:
       - data-store
       - authenticator
+    env_file: .env
     environment:
       - FLASK_ENV=development
       - AUTHENTICATOR_HOST=http://localhost:4004
       - DATA_STORE_API_HOST=http://data-store:8080
+    stdin_open: true
+    tty: true
     ports:
       - 4002:8080
       - 5688:5678
+    restart: unless-stopped
   redis-data:
     image: redis
     ports:
@@ -98,13 +106,17 @@ services:
     depends_on:
       - data-store
       - authenticator
+    env_file: .env
     environment:
       - FLASK_ENV=development
       - AUTHENTICATOR_HOST=http://localhost:4004
       - DATA_STORE_API_HOST=http://data-store:8080
+    stdin_open: true
+    tty: true
     ports:
       - 4003:8080
       - 5689:5678
+    restart: unless-stopped
   localstack:
     image: localstack/localstack
     ports:
