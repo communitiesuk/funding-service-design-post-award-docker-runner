@@ -5,7 +5,6 @@
 
 ## How to run
 * Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
-* Copy `.env.example` to `.env` and ask another team member for the missing secret values
 * `docker compose up`
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
 * Note: When testing locally using the docker runner, docker might use the cached version of fsd_utils (or any another dependency). To avoid this and pick up your intended changes, run `docker compose build <service_name> --no-cache` first before running `docker compose up`.
@@ -19,6 +18,19 @@
 
 ## localstack setup
 * The localstack S3 buckets should be running at http://data-store-failed-files-dev.s3.localhost.localstack.cloud:4566/ and http://data-store-successful-files-dev.s3.localhost.localstack.cloud:4566/
+
+## Azure AD and Notify setup (Optional)
+
+### Azure AD
+We have an override locally so you can access protected routes without authenticating, but if you need to test something specific to authentication it is possible to set this up:
+* For Azure AD authentication to work locally, you will need a user account on the Test Active Directory, ask a tech lead how to request this
+* Copy `.env.example` to `.env` and ask a tech lead for the missing secret values to set in `.env`
+* Uncomment the `AZURE_AD_CLIENT_ID`, `AZURE_AD_CLIENT_SECRET` and `AZURE_AD_TENANT_ID` lines from [`docker-compose.yml`](docker-compose.yml)
+* Disable `DEBUG_USER_ON` in the development config of `funding-service-design-post-award-data-frontend` and `funding-service-design-post-award-submit` repositories
+
+### Notify
+We have an override locally so that Notify emails are not sent by default. If you need to something specific to Notify integration it is possible to set this up:
+* Copy `.env.example` to `.env`, ask a tech lead for value for `NOTIFY_API_KEY` and set it in `.env`
 
 # Scripts
 
