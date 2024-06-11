@@ -52,9 +52,9 @@ services:
       - POST_AWARD_FRONTEND_HOST=http://localhost:4002
       - POST_AWARD_SUBMIT_HOST=http://localhost:4003
       #  Uncomment to test Azure AD locally once credentials are set in .env
-#      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
-#      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
-#      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
+      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
+      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
+      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
   frontend:
     # https://github.com/communitiesuk/funding-service-design-post-award-data-frontend
     build:
@@ -119,3 +119,14 @@ services:
     volumes:
       - "./scripts/localstack-script.sh:/etc/localstack/init/ready.d/script.sh"
       - "/var/run/docker.sock:/var/run/docker.sock"
+  form-runner:
+    build:
+      context: ../digital-form-builder
+      dockerfile: ./fsd_config/Dockerfile
+    command: yarn runner startdebug
+    ports:
+      - 3009:3009
+      - 9228:9228
+    environment:
+      - 'NODE_CONFIG={"safelist": ["data-store"]}'
+    env_file: .awslocal.env
