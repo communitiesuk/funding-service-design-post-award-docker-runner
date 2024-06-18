@@ -23,6 +23,7 @@ services:
       - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
       - AWS_S3_BUCKET_FIND_DATA_FILES=data-store-find-data
 #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
+      - FIND_SERVICE_BASE_URL=http://localhost:4002
     restart: unless-stopped
     depends_on:
       - database
