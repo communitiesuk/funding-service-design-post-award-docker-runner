@@ -5,12 +5,12 @@ services:
       context: ../funding-service-design-post-award-data-store
       args:
         REQUIREMENTS: requirements-dev.txt
-    command: bash -c "flask db upgrade && flask seed-ref && ${VSC_DEBUG:-flask run -p 8080 -h 0.0.0.0}"
+    command: bash -c "flask db upgrade && flask seed-ref && ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}"
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
     stdin_open: true
     tty: true
     ports:
-      - 4001:8080
+      - 4001:4001
       - 5683:5678
     env_file: .env
     environment:
