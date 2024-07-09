@@ -3,13 +3,16 @@ services:
     # https://github.com/communitiesuk/funding-service-design-post-award-data-store
     build:
       context: ../funding-service-design-post-award-data-store
-      args: 
+      args:
         REQUIREMENTS: requirements-dev.txt
-    command: bash -c "flask db upgrade && ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}"
+    command: bash -c "flask db upgrade && flask seed-ref && ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}"
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
+    stdin_open: true
+    tty: true
     ports:
       - 4001:4001
       - 5683:5678
+    env_file: .env
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://postgres:password@database:5432/data_store
@@ -18,6 +21,10 @@ services:
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-test}
       - AWS_ENDPOINT_OVERRIDE=http://localstack:4566/
       - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
+      - AWS_S3_BUCKET_FIND_DATA_FILES=data-store-find-data
+      #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
+      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4002
+    restart: unless-stopped
     depends_on:
       - database
   account-store:
@@ -53,9 +60,9 @@ services:
       - POST_AWARD_FRONTEND_HOST=http://find-monitoring-data.levellingup.gov.localhost:4001
       - POST_AWARD_SUBMIT_HOST=http://submit-monitoring-data.levellingup.gov.localhost:4001
       #  Uncomment to test Azure AD locally once credentials are set in .env
-#      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
-#      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
-#      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
+      #      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
+      #      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
+      #      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
   redis-data:
     image: redis
     ports:
@@ -73,8 +80,8 @@ services:
   localstack:
     image: localstack/localstack
     ports:
-      - "127.0.0.1:4566:4566"            # LocalStack Gateway
-      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "127.0.0.1:4566:4566" # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559" # external services port range
     environment:
       - DEBUG=${DEBUG-}
       - DOCKER_HOST=unix:///var/run/docker.sock
