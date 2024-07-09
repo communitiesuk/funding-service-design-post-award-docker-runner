@@ -56,9 +56,10 @@ services:
       - POST_AWARD_FRONTEND_HOST=http://localhost:4002
       - POST_AWARD_SUBMIT_HOST=http://localhost:4003
       #  Uncomment to test Azure AD locally once credentials are set in .env
-#      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
-#      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
-#      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
+      # - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
+      # - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
+      # - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
+      - AWS_DEFAULT_REGION=eu-west-2
   frontend:
     # https://github.com/communitiesuk/funding-service-design-post-award-data-frontend
     build:
