@@ -48,9 +48,10 @@ services:
     environment:
       - REDIS_INSTANCE_URI=redis://redis-data:6379
       - ACCOUNT_STORE_API_HOST=http://account-store:8080
-      - AUTHENTICATOR_HOST=http://localhost:4004
-      - POST_AWARD_FRONTEND_HOST=http://localhost:4002
-      - POST_AWARD_SUBMIT_HOST=http://localhost:4003
+      - AUTHENTICATOR_HOST=http://authenticator.levellingup.gov.localhost:4004
+      - COOKIE_DOMAIN=.levellingup.gov.localhost
+      - POST_AWARD_FRONTEND_HOST=http://find-monitoring-data.levellingup.gov.localhost:4001
+      - POST_AWARD_SUBMIT_HOST=http://submit-monitoring-data.levellingup.gov.localhost:4001
       #  Uncomment to test Azure AD locally once credentials are set in .env
 #      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
 #      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
