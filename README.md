@@ -2,6 +2,9 @@
 
 ## Prerequisites
 *  [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+* Update your `/etc/hosts` file to include the following lookups:
+  * `127.0.0.1  submit-monitoring-data.levellingup.gov.localhost`
+  * `127.0.0.1  find-monitoring-data.levellingup.gov.localhost`
 
 ## How to run
 * Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
