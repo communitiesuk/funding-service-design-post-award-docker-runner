@@ -23,8 +23,8 @@ services:
       - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
       - AWS_S3_BUCKET_FIND_DOWNLOAD_FILES=data-store-find-data
       #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
-      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4002
-      - REDIS_URL=redis://redis-data:6379
+      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4001
+      - REDIS_URL=redis://redis-data:6379/1
     restart: unless-stopped
     depends_on:
       - database
@@ -48,8 +48,8 @@ services:
       - AWS_ENDPOINT_OVERRIDE=http://localstack:4566/
       - AWS_S3_BUCKET_FIND_DOWNLOAD_FILES=data-store-find-data
 #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
-      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4002
-      - REDIS_URL=redis://redis-data:6379
+      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4001
+      - REDIS_URL=redis://redis-data:6379/1
     stdin_open: true
     tty: true
     restart: unless-stopped
@@ -79,7 +79,7 @@ services:
       - redis-data
       - account-store
     environment:
-      - REDIS_INSTANCE_URI=redis://redis-data:6379
+      - REDIS_INSTANCE_URI=redis://redis-data:6379/0
       - ACCOUNT_STORE_API_HOST=http://account-store:8080
       - AUTHENTICATOR_HOST=http://localhost:4004
       - POST_AWARD_FRONTEND_HOST=http://find-monitoring-data.levellingup.gov.localhost:4001
