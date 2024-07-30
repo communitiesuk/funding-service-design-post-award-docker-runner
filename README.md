@@ -8,6 +8,7 @@
 
 ## How to run
 * Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
+* Create `.env` file using the `.env.example` file. You can leave it empty, but it must exist.
 * `docker compose up`
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
 * Note: When testing locally using the docker runner, docker might use the cached version of fsd_utils (or any another dependency). To avoid this and pick up your intended changes, run `docker compose build <service_name> --no-cache` first before running `docker compose up`.
