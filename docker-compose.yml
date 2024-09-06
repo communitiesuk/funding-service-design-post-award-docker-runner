@@ -32,6 +32,7 @@ services:
       #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
       - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4001
       - REDIS_URL=redis://redis-data:6379/1
+      - AUTHENTICATOR_HOST=http://authenticator.levellingup.gov.localhost:4004
     restart: unless-stopped
     depends_on:
       database:
