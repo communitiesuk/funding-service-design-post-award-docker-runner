@@ -17,9 +17,11 @@ services:
       flask db upgrade && \
       flask db-data seed-ref && \
       flask db-data seed-sample-data && \
-      ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}
+      ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0 --cert=/app-certs/cert.pem --key=/app-certs/key.pem}
       "
-    volumes: [ '../funding-service-design-post-award-data-store:/app' ]
+    volumes:
+      - '../funding-service-design-post-award-data-store:/app'
+      - './certs:/app-certs'
     stdin_open: true
     tty: true
     ports:
@@ -36,9 +38,9 @@ services:
       - AWS_S3_BUCKET_FAILED_FILES=data-store-failed-files-dev
       - AWS_S3_BUCKET_FIND_DOWNLOAD_FILES=data-store-find-data
       #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
-      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4001
+      - FIND_SERVICE_BASE_URL=https://find-monitoring-data.levellingup.gov.localhost:4001
       - REDIS_URL=redis://redis-data:6379/1
-      - AUTHENTICATOR_HOST=http://authenticator.levellingup.gov.localhost:4004
+      - AUTHENTICATOR_HOST=https://authenticator.levellingup.gov.localhost:4004
     restart: unless-stopped
     depends_on:
       database:
@@ -72,7 +74,7 @@ services:
       - AWS_ENDPOINT_OVERRIDE=http://localstack:4566/
       - AWS_S3_BUCKET_FIND_DOWNLOAD_FILES=data-store-find-data
 #      - NOTIFY_FIND_API_KEY=${NOTIFY_FIND_API_KEY:?err}
-      - FIND_SERVICE_BASE_URL=http://find-monitoring-data.levellingup.gov.localhost:4001
+      - FIND_SERVICE_BASE_URL=https://find-monitoring-data.levellingup.gov.localhost:4001
       - REDIS_URL=redis://redis-data:6379/1
     stdin_open: true
     tty: true
@@ -97,8 +99,10 @@ services:
     # https://github.com/communitiesuk/funding-service-design-authenticator
     build:
       context: ../funding-service-design-authenticator
-    volumes: [ '../funding-service-design-authenticator:/app' ]
-    command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run -p 8080 -h 0.0.0.0"
+    volumes:
+      - '../funding-service-design-authenticator:/app'
+      - './certs:/app-certs'
+    command: bash -c "python -m debugpy --listen 0.0.0.0:5678 -m flask run -p 8080 -h 0.0.0.0 --cert=/app-certs/cert.pem --key=/app-certs/key.pem"
     ports:
       - 4004:8080
       - 5684:5678
@@ -109,14 +113,13 @@ services:
     environment:
       - REDIS_INSTANCE_URI=redis://redis-data:6379/0
       - ACCOUNT_STORE_API_HOST=http://account-store:8080
-      - AUTHENTICATOR_HOST=authenticator.levellingup.gov.localhost:4004
-      - POST_AWARD_FRONTEND_HOST=http://find-monitoring-data.levellingup.gov.localhost:4001
-      - POST_AWARD_SUBMIT_HOST=http://submit-monitoring-data.levellingup.gov.localhost:4001
+      - AUTHENTICATOR_HOST=https://authenticator.levellingup.gov.localhost:4004
+      - POST_AWARD_FRONTEND_HOST=https://find-monitoring-data.levellingup.gov.localhost:4001
+      - POST_AWARD_SUBMIT_HOST=https://submit-monitoring-data.levellingup.gov.localhost:4001
       - COOKIE_DOMAIN=.levellingup.gov.localhost
-      #  Uncomment to test Azure AD locally once credentials are set in .env
-      #      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
-      #      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
-      #      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
+      - AZURE_AD_CLIENT_ID=${AZURE_AD_CLIENT_ID:?err}
+      - AZURE_AD_CLIENT_SECRET=${AZURE_AD_CLIENT_SECRET:?err}
+      - AZURE_AD_TENANT_ID=${AZURE_AD_TENANT_ID:?err}
     stdin_open: true
     tty: true
   redis-data:

@@ -1,18 +1,21 @@
 # funding-service-design-post-award-docker-runner
 
 ## Prerequisites
-*  [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 * Update your `/etc/hosts` file to include the following lookups:
   * `127.0.0.1  submit-monitoring-data.levellingup.gov.localhost`
   * `127.0.0.1  find-monitoring-data.levellingup.gov.localhost`
   * `127.0.0.1 authenticator.levellingup.gov.localhost`
   * `127.0.0.1 account-store.levellingup.gov.localhost`
   * `127.0.0.1 localstack`
+* Install [mkcert](https://github.com/FiloSottile/mkcert).
+  * On MacOS, `brew install mkcert` should suffice.
 
 ## How to run
-* Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
-* Create `.env` file using the `.env.example` file. You can leave it empty, but it must exist.
-* `docker compose up`
+* Run `make bootstrap` to clone all required repositories (they will be cloned to the parent directory of this repository).
+* Run `make certs` to install a root certificate authority and generate appropriate certificates for our localhost domains.
+  * If you are not able to use `sudo` directly, you may need to assume the superuser account to run this command, then `chown` the `certs` directory back to your non-superuser account. Feel free to grab another senior dev if you have trouble with this step.
+* `make up` (this basically just runs docker compose up, but if you have generated certs it will inject these automatically)
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
 * Note: When testing locally using the docker runner, docker might use the cached version of fsd_utils (or any another dependency). To avoid this and pick up your intended changes, run `docker compose build <service_name> --no-cache` first before running `docker compose up`.
 
