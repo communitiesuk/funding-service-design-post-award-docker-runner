@@ -9,10 +9,14 @@
   * `127.0.0.1 account-store.levellingup.gov.localhost`
   * `127.0.0.1 localstack`
 
+### If/When you have a test.communities MHCLG user account:
+* Install [mkcert](https://github.com/FiloSottile/mkcert).
+  * On MacOS, `brew install mkcert` should suffice.
+  * Once installed, run `make certs` to install a root certificate authority and generate appropriate certificates for our localhost domains.
+
 ## How to run
-* Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
-* Create `.env` file using the `.env.example` file. You can leave it empty, but it must exist.
-* `docker compose up`
+* Run `make bootstrap` to clone all required repositories (they will be cloned to the parent directory of this repository).
+* `make up` (this basically just runs docker compose up, but if you have generated certs it will inject these automatically)
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
 * Note: When testing locally using the docker runner, docker might use the cached version of fsd_utils (or any another dependency). To avoid this and pick up your intended changes, run `docker compose build <service_name> --no-cache` first before running `docker compose up`.
 
