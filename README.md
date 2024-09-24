@@ -8,6 +8,10 @@
   * `127.0.0.1 authenticator.levellingup.gov.localhost`
   * `127.0.0.1 account-store.levellingup.gov.localhost`
   * `127.0.0.1 localstack`
+* Install [mkcert](https://github.com/FiloSottile/mkcert).
+  * On MacOS, `brew install mkcert` should suffice.
+  * Once installed, run `mkcert -install` to install a root certificate authority.
+  * Run `mkcert "*.levellingup.gov.localhost"` -cert-file certs/cert.pem -key-file cert-key.pem
 
 ## How to run
 * Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
