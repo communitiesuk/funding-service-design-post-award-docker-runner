@@ -12,7 +12,13 @@ services:
       context: ../funding-service-design-post-award-data-store
       args:
         REQUIREMENTS: requirements-dev.txt
-    command: bash -c "flask db upgrade && flask db-data seed-ref && flask db-data seed-sample-data && ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}"
+    command: >
+      bash -c "
+      flask db upgrade && \
+      flask db-data seed-ref && \
+      flask db-data seed-sample-data && \
+      ${VSC_DEBUG:-flask run -p 4001 -h 0.0.0.0}
+      "
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
     stdin_open: true
     tty: true
@@ -42,7 +48,14 @@ services:
       context: ../funding-service-design-post-award-data-store
       args:
         REQUIREMENTS: requirements-dev.txt
-    command: celery -A app.celery_app worker --loglevel INFO
+    command: >
+      bash -c "
+      if [ \"$CELERY_AUTO_REFRESH\" = \"true\" ]; then
+          watchfiles 'celery -A app.celery_app worker --loglevel INFO' --filter python;
+      else
+          celery -A app.celery_app worker --loglevel INFO;
+      fi
+      "
     volumes: [ '../funding-service-design-post-award-data-store:/app' ]
     depends_on:
       redis-data:
