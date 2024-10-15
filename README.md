@@ -1,18 +1,30 @@
 # funding-service-design-post-award-docker-runner
 
 ## Prerequisites
-*  [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
 * Update your `/etc/hosts` file to include the following lookups:
   * `127.0.0.1  submit-monitoring-data.levellingup.gov.localhost`
   * `127.0.0.1  find-monitoring-data.levellingup.gov.localhost`
   * `127.0.0.1 authenticator.levellingup.gov.localhost`
   * `127.0.0.1 account-store.levellingup.gov.localhost`
   * `127.0.0.1 localstack`
+* Install [mkcert](https://github.com/FiloSottile/mkcert).
+  * On MacOS, `brew install mkcert` should suffice.
 
 ## How to run
-* Run `./scripts/bootstrap.sh` to clone all required repositories (they will be cloned to the parent directory of this repository).
-* Create `.env` file using the `.env.example` file. You can leave it empty, but it must exist.
-* `docker compose up`
+* Run `make bootstrap` to clone all required repositories (they will be cloned to the parent directory of this repository).
+* Run `make certs` to install a root certificate authority and generate appropriate certificates for our localhost domains.
+  * If you are on a MHCLG laptop, your default user is unlikely to have `sudo` permission, which is required, so you may need to take the following steps instead:
+    * Find your STANDARD_USER (that you use normally) and ADMIN_USER (that can use `sudo`) account names. Substitute appropriately in the following commands:
+    * `su - <ADMIN_USER>`
+    * `cd` to the directory *above* this docker-runner repo.
+    * run `sudo chown -R <ADMIN_USER>:staff funding-service-design-post-award-docker-runner`
+    * `cd funding-service-design-post-award-docker-runner`
+    * `make certs`  # Read the output - should be no apparent errors.
+    * `cd ..`
+    * `sudo chown -R <STANDARD_USER>:staff funding-service-design-post-award-docker-runner`
+    * `exit` to return to your standard user shell.
+* `make up` (this basically just runs docker compose up, but if you have generated certs it will inject these automatically)
 * Apps should be running on localhost on the ports in the [docker-compose.yml](docker-compose.yml) `ports` key before the `:`
 * Note: When testing locally using the docker runner, docker might use the cached version of fsd_utils (or any another dependency). To avoid this and pick up your intended changes, run `docker compose build <service_name> --no-cache` first before running `docker compose up`.
 
