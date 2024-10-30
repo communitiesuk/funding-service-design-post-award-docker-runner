@@ -1,3 +1,7 @@
+# Archival notice
+
+This docker runner has been replaced by a single combined Funding Service docker runner here: https://github.com/communitiesuk/funding-service-design-post-award-docker-runner
+
 # funding-service-design-post-award-docker-runner
 
 ## Prerequisites
